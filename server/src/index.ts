@@ -3,6 +3,8 @@ import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
 import profileRoutes from "./routes/profile.routes";
+import matchesRoutes from "./routes/matches.routes";
+import usersRoutes from "./routes/users.routes";
 
 dotenv.config();
 
@@ -17,6 +19,8 @@ app.get("/api/health", (req, res) => {
 });
 
 app.use("/api/profile", profileRoutes);
+app.use("/api/matches", matchesRoutes);
+app.use("/api/users", usersRoutes);
 
 const startServer = async () => {
   await connectDB();
