@@ -32,10 +32,15 @@ export interface ProfileFormData {
   bio: string;
 }
 
-export interface MatchResult {
+export interface Match {
   user: User;
   matchScore: number;
   matchPercentage: number;
+}
+
+export interface PracticeMission {
+  topic: string;
+  durationMinutes: number;
 }
 
 export interface Connection {
@@ -44,6 +49,7 @@ export interface Connection {
   receiverId: User;
   status: ConnectionStatus;
   createdAt: string;
+  practiceMission?: PracticeMission;
 }
 
 export interface ApiResponse<T> {

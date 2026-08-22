@@ -1,24 +1,56 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { UserProvider, useUser } from "./context/UserContext.tsx";
 import Navbar from "./components/Navbar";
+import WelcomePage from "./pages/WelcomePage";
 import CreateProfile from "./pages/CreateProfile";
 import FindPartners from "./pages/FindPartners";
 import MyConnections from "./pages/MyConnections";
 
+// Redirects to Welcome if no profile exists yet
+const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
+  const { userId } = useUser();
+  if (!userId) return <Navigate to="/" replace />;
+  return <>{children}</>;
+};
+
+const AppRoutes = () => {
+  return (
+    <Routes>
+      <Route path="/" element={<WelcomePage />} />
+      <Route path="/profile" element={<CreateProfile />} />
+      <Route
+        path="/find-partners"
+        element={
+          <ProtectedRoute>
+            <FindPartners />
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/connections"
+        element={
+          <ProtectedRoute>
+            <MyConnections />
+          </ProtectedRoute>
+        }
+      />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
+
 function App() {
   return (
-    <BrowserRouter>
-      <div className="min-h-screen bg-gray-50">
-        <Navbar />
-        <main>
-          <Routes>
-            <Route path="/" element={<Navigate to="/profile" replace />} />
-            <Route path="/profile" element={<CreateProfile />} />
-            <Route path="/find-partners" element={<FindPartners />} />
-            <Route path="/connections" element={<MyConnections />} />
-          </Routes>
-        </main>
-      </div>
-    </BrowserRouter>
+    <UserProvider>
+      <BrowserRouter>
+        <div className="min-h-screen bg-slate-50">
+          <Navbar />
+          <main>
+            <AppRoutes />
+          </main>
+        </div>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 
