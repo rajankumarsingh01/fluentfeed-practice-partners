@@ -1,4 +1,4 @@
-import type { Match, User } from "../types";
+import type { User } from "../types";
 
 interface MatchCardProps {
   match: { user: User; matchPercentage: number };
@@ -17,10 +17,10 @@ const MatchCard = ({ match, onConnect, connecting, alreadyRequested }: MatchCard
   const { user, matchPercentage } = match;
 
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-md transition-shadow">
+    <div className="group bg-white rounded-2xl border border-slate-200 p-5 shadow-sm hover:shadow-lg hover:-translate-y-1 hover:border-brand-200 transition-all duration-250 stagger-item">
       <div className="flex items-start justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-semibold">
+          <div className="w-11 h-11 rounded-full bg-gradient-to-br from-brand-400 to-brand-600 flex items-center justify-center text-white font-semibold group-hover:scale-105 transition-transform duration-200">
             {user.name.charAt(0).toUpperCase()}
           </div>
           <div>
@@ -48,9 +48,9 @@ const MatchCard = ({ match, onConnect, connecting, alreadyRequested }: MatchCard
       <button
         onClick={() => onConnect(user._id)}
         disabled={connecting || alreadyRequested}
-        className="w-full py-2 rounded-xl text-sm font-semibold bg-brand-500 text-white hover:bg-brand-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+        className="w-full py-2 rounded-xl text-sm font-semibold bg-brand-500 text-white hover:bg-brand-600 active:scale-[0.98] transition-all duration-150 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
       >
-        {alreadyRequested ? "Request Sent" : connecting ? "Connecting..." : "Connect"}
+        {alreadyRequested ? "✓ Request Sent" : connecting ? "Connecting..." : "Connect"}
       </button>
     </div>
   );

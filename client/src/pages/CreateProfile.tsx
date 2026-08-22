@@ -2,6 +2,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProfile, getProfile, updateProfile } from "../api";
 import { useUser } from "../context/UserContext.tsx";
+import { useToast } from "../context/ToastContext";
 import type { ProfileFormData } from "../types";
 import ErrorBanner from "../components/ErrorBanner";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -27,13 +28,13 @@ const emptyForm: ProfileFormData = {
 
 const CreateProfile = () => {
   const { userId, setUserId } = useUser();
+  const { showToast } = useToast();
   const navigate = useNavigate();
 
   const [form, setForm] = useState<ProfileFormData>(emptyForm);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(!!userId);
   const [error, setError] = useState("");
-  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
     if (!userId) {
@@ -74,22 +75,22 @@ const CreateProfile = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
-    setSuccess(false);
     setLoading(true);
 
     try {
       if (userId) {
         await updateProfile(userId, form);
+        showToast("Profile updated successfully ✅", "success");
       } else {
         const res = await createProfile(form);
         if (res.data) setUserId(res.data._id);
+        showToast(`Welcome, ${form.name.split(" ")[0]}! Profile created 🎉`, "success");
       }
-      setSuccess(true);
-      setTimeout(() => navigate("/find-partners"), 900);
+      setTimeout(() => navigate("/find-partners"), 600);
     } catch (err: any) {
-      setError(
-        err?.response?.data?.message || "Something went wrong. Please try again."
-      );
+      const msg = err?.response?.data?.message || "Something went wrong. Please try again.";
+      setError(msg);
+      showToast(msg, "error");
     } finally {
       setLoading(false);
     }
@@ -99,7 +100,7 @@ const CreateProfile = () => {
 
   return (
     <div className="max-w-xl mx-auto px-4 sm:px-6 py-8">
-      <div className="mb-6">
+      <div className="mb-6 animate-fade-in-up">
         <h1 className="text-2xl font-bold text-slate-800">
           {userId ? "Edit Your Profile" : "Create Your Profile"}
         </h1>
@@ -110,14 +111,9 @@ const CreateProfile = () => {
 
       <form
         onSubmit={handleSubmit}
-        className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm"
+        className="bg-white rounded-2xl border border-slate-200 p-6 space-y-4 shadow-sm animate-fade-in-up"
       >
         {error && <ErrorBanner message={error} />}
-        {success && (
-          <div className="bg-emerald-50 border border-emerald-200 text-emerald-700 text-sm rounded-xl px-4 py-3">
-            ✅ Profile saved! Redirecting to Find Partners...
-          </div>
-        )}
 
         <div>
           <label className="block text-sm font-medium text-slate-700 mb-1">Name</label>
@@ -127,7 +123,7 @@ const CreateProfile = () => {
             value={form.name}
             onChange={(e) => handleChange("name", e.target.value)}
             placeholder="e.g. Rajan Kumar Singh"
-            className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+            className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow"
           />
         </div>
 
@@ -140,7 +136,7 @@ const CreateProfile = () => {
               required
               value={form.englishLevel}
               onChange={(e) => handleChange("englishLevel", e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow"
             >
               <option value="">Select level</option>
               {ENGLISH_LEVELS.map((lvl) => (
@@ -159,7 +155,7 @@ const CreateProfile = () => {
               required
               value={form.learningGoal}
               onChange={(e) => handleChange("learningGoal", e.target.value)}
-              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow"
             >
               <option value="">Select goal</option>
               {LEARNING_GOALS.map((goal) => (
@@ -182,7 +178,7 @@ const CreateProfile = () => {
               value={form.nativeLanguage}
               onChange={(e) => handleChange("nativeLanguage", e.target.value)}
               placeholder="e.g. Hindi"
-              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow"
             />
           </div>
           <div>
@@ -193,7 +189,7 @@ const CreateProfile = () => {
               value={form.country}
               onChange={(e) => handleChange("country", e.target.value)}
               placeholder="e.g. India"
-              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+              className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow"
             />
           </div>
         </div>
@@ -208,7 +204,7 @@ const CreateProfile = () => {
             value={form.preferredTime}
             onChange={(e) => handleChange("preferredTime", e.target.value)}
             placeholder="e.g. Evening (6-9 PM)"
-            className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400"
+            className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow"
           />
         </div>
 
@@ -221,7 +217,7 @@ const CreateProfile = () => {
             placeholder="Tell potential partners a bit about yourself..."
             rows={3}
             maxLength={300}
-            className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 resize-none"
+            className="w-full border border-slate-300 rounded-xl px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-brand-400 transition-shadow resize-none"
           />
           <p className="text-xs text-slate-400 text-right mt-1">{form.bio.length}/300</p>
         </div>
@@ -229,7 +225,7 @@ const CreateProfile = () => {
         <button
           type="submit"
           disabled={loading}
-          className="w-full py-2.5 rounded-xl font-semibold text-white bg-brand-500 hover:bg-brand-600 transition-colors disabled:opacity-50"
+          className="w-full py-2.5 rounded-xl font-semibold text-white bg-brand-500 hover:bg-brand-600 active:scale-[0.98] transition-all duration-150 disabled:opacity-50"
         >
           {loading ? "Saving..." : userId ? "Update Profile" : "Create Profile"}
         </button>

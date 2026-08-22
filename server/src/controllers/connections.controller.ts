@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import Connection from "../models/Connection";
 import User from "../models/User";
+import { getRandomMission } from "../data/missions";
 
 // POST /api/connections — send a connection request
 export const sendConnectionRequest = async (req: Request, res: Response) => {
@@ -21,7 +22,6 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
       });
     }
 
-    // Ensure both users exist
     const [sender, receiver] = await Promise.all([
       User.findById(senderId),
       User.findById(receiverId),
@@ -34,7 +34,6 @@ export const sendConnectionRequest = async (req: Request, res: Response) => {
       });
     }
 
-    // Check if a connection already exists in either direction
     const existing = await Connection.findOne({
       $or: [
         { senderId, receiverId },
@@ -87,19 +86,15 @@ export const getConnections = async (req: Request, res: Response) => {
     let filter: Record<string, any> = {};
 
     if (type === "incoming") {
-      // Requests received by this user, still pending
       filter = { receiverId: userId, status: "pending" };
     } else if (type === "sent") {
-      // Requests this user sent, still pending
       filter = { senderId: userId, status: "pending" };
     } else if (type === "connected") {
-      // Accepted connections in either direction
       filter = {
         status: "accepted",
         $or: [{ senderId: userId }, { receiverId: userId }],
       };
     } else {
-      // No type -> return everything involving this user
       filter = { $or: [{ senderId: userId }, { receiverId: userId }] };
     }
 
@@ -152,12 +147,23 @@ export const updateConnectionStatus = async (req: Request, res: Response) => {
     }
 
     connection.status = status;
+
+    // Bonus Feature: assign a random practice mission when a connection is accepted
+    if (status === "accepted") {
+      connection.practiceMission = getRandomMission();
+    }
+
     await connection.save();
+
+    const populated = await connection.populate([
+      { path: "senderId", select: "name englishLevel learningGoal country" },
+      { path: "receiverId", select: "name englishLevel learningGoal country" },
+    ]);
 
     return res.status(200).json({
       success: true,
       message: `Connection request ${status}`,
-      data: connection,
+      data: populated,
     });
   } catch (err: any) {
     if (err.name === "CastError") {

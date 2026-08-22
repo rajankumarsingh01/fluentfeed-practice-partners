@@ -1,12 +1,12 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { UserProvider, useUser } from "./context/UserContext.tsx";
+import { ToastProvider } from "./context/ToastContext";
 import Navbar from "./components/Navbar";
 import WelcomePage from "./pages/WelcomePage";
 import CreateProfile from "./pages/CreateProfile";
 import FindPartners from "./pages/FindPartners";
 import MyConnections from "./pages/MyConnections";
 
-// Redirects to Welcome if no profile exists yet
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { userId } = useUser();
   if (!userId) return <Navigate to="/" replace />;
@@ -42,14 +42,16 @@ const AppRoutes = () => {
 function App() {
   return (
     <UserProvider>
-      <BrowserRouter>
-        <div className="min-h-screen bg-slate-50">
-          <Navbar />
-          <main>
-            <AppRoutes />
-          </main>
-        </div>
-      </BrowserRouter>
+      <ToastProvider>
+        <BrowserRouter>
+          <div className="min-h-screen bg-slate-50">
+            <Navbar />
+            <main>
+              <AppRoutes />
+            </main>
+          </div>
+        </BrowserRouter>
+      </ToastProvider>
     </UserProvider>
   );
 }
