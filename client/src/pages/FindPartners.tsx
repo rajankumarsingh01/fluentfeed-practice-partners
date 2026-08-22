@@ -67,7 +67,7 @@ const FindPartners = () => {
     try {
       await sendConnectionRequest(userId, targetUserId);
       setRequestedIds((prev) => new Set(prev).add(targetUserId));
-      showToast(`Request sent to ${targetName} 🎉`, "success");
+      showToast(`Request sent to ${targetName} `, "success");
     } catch (err) {
       const msg = getErrorMessage(err, "Could not send connection request.");
       showToast(msg, "error");

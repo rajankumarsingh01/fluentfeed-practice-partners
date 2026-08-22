@@ -80,11 +80,11 @@ const CreateProfile = () => {
     try {
       if (userId) {
         await updateProfile(userId, form);
-        showToast("Profile updated successfully ✅", "success");
+        showToast("Profile updated successfully ", "success");
       } else {
         const res = await createProfile(form);
         if (res.data) setUserId(res.data._id);
-        showToast(`Welcome, ${form.name.split(" ")[0]}! Profile created 🎉`, "success");
+        showToast(`Welcome, ${form.name.split(" ")[0]}! Profile created `, "success");
       }
       setTimeout(() => navigate("/find-partners"), 600);
     } catch (err) {

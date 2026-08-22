@@ -44,7 +44,7 @@ export const ToastProvider = ({ children }: { children: ReactNode }) => {
 };
 
 const styles: Record<ToastType, { bg: string; icon: string }> = {
-  success: { bg: "bg-emerald-600", icon: "✅" },
+  success: { bg: "bg-emerald-600", icon: "" },
   error: { bg: "bg-red-600", icon: "⚠️" },
   info: { bg: "bg-slate-800", icon: "ℹ️" },
 };

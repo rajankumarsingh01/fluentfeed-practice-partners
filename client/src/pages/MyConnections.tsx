@@ -37,7 +37,7 @@ useEffect(() => {
       await updateConnectionStatus(id, status);
       loadConnections();
       showToast(
-        status === "accepted" ? `You're now connected with ${name}! 🎉` : `Request from ${name} declined`,
+        status === "accepted" ? `You're now connected with ${name}! ` : `Request from ${name} declined`,
         status === "accepted" ? "success" : "info"
       );
     } catch {
