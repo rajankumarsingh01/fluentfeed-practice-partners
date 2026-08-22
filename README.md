@@ -1,6 +1,6 @@
 # 🗣️ FluentFeed Practice Partners
 
-> AI-powered English practice partner matching platform — built as a Full-Stack Development Intern technical assignment for FluentFeed.
+> AI-powered English practice partner matching platform — built as a Full-Stack Development Intern technical assignment for **FluentFeed**.
 
 FluentFeed helps English learners create a profile, get matched with the most compatible practice partners based on their goals and preferences, send/accept connection requests, and receive a daily practice topic once connected.
 
@@ -8,15 +8,29 @@ FluentFeed helps English learners create a profile, get matched with the most co
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?logo=typescript&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-47A248?logo=mongodb&logoColor=white)
+![Deployed](https://img.shields.io/badge/status-live-brightgreen)
+
+---
+
+## 🔗 Live Links
+
+| Resource | Link |
+|---|---|
+| **Live App (Frontend)** | https://fluentfeed-practice-partners.vercel.app |
+| **Backend API** | https://fluentfeed-server.onrender.com/api |
+| **Health Check** | https://fluentfeed-server.onrender.com/api/health |
+| **GitHub Repository** | https://github.com/rajankumarsingh01/fluentfeed-practice-partners |
+
+> ⚠️ **Note:** The backend is hosted on Render's free tier, which spins down after periods of inactivity. The **first request after idle time may take 30–50 seconds** to respond while the server cold-starts — this is expected behavior, not a bug.
 
 ---
 
 ## 📋 Table of Contents
 
-- [Tech Stack](#-tech-stack)
+- [Tech Stack](#️-tech-stack)
 - [Project Structure](#-project-structure)
 - [Setup Instructions](#-setup-instructions)
-- [Database Setup](#-database-setup)
+- [Database Setup](#️-database-setup)
 - [API Documentation](#-api-documentation)
 - [Matching Algorithm](#-matching-algorithm)
 - [Assumptions Made](#-assumptions-made)
@@ -32,28 +46,34 @@ FluentFeed helps English learners create a profile, get matched with the most co
 | **Frontend** | React 19, TypeScript, Vite, Tailwind CSS 4, React Router, Axios |
 | **Backend** | Node.js, Express.js, TypeScript |
 | **Database** | MongoDB (MongoDB Atlas — cloud-hosted) |
+| **Hosting** | Vercel (frontend) · Render (backend) · MongoDB Atlas (database) |
 
 ---
 
 ## 📁 Project Structure
+
+```
 fluentfeed-practice-partners/
-├── client/ # React + TypeScript frontend
-│ ├── src/
-│ │ ├── api/ # Axios instance + typed API calls
-│ │ ├── components/ # Reusable UI components
-│ │ ├── context/ # UserContext (session), ToastContext (notifications)
-│ │ ├── pages/ # WelcomePage, CreateProfile, FindPartners, MyConnections
-│ │ └── types/ # Shared TypeScript types
-│ └── .env.example
-├── server/ # Node.js + Express + TypeScript backend
-│ ├── src/
-│ │ ├── config/db.ts # MongoDB connection
-│ │ ├── controllers/ # profile, matches, users, connections
-│ │ ├── models/ # User, Connection (Mongoose schemas)
-│ │ ├── routes/ # Express routers
-│ │ └── data/missions.ts # Practice mission topic bank
-│ └── .env.example
+├── client/                    # React + TypeScript frontend
+│   ├── src/
+│   │   ├── api/                # Axios instance + typed API calls
+│   │   ├── components/         # Reusable UI components
+│   │   ├── context/             # UserContext (session), ToastContext (notifications)
+│   │   ├── pages/               # WelcomePage, CreateProfile, FindPartners, MyConnections
+│   │   └── types/                # Shared TypeScript types
+│   ├── vercel.json
+│   └── .env.example
+├── server/                     # Node.js + Express + TypeScript backend
+│   ├── src/
+│   │   ├── config/db.ts         # MongoDB connection
+│   │   ├── controllers/          # profile, matches, users, connections
+│   │   ├── models/                # User, Connection (Mongoose schemas)
+│   │   ├── routes/                 # Express routers
+│   │   └── data/missions.ts        # Practice mission topic bank
+│   └── .env.example
+├── render.yaml
 └── README.md
+```
 
 ---
 
@@ -142,15 +162,22 @@ Uses **MongoDB** via **Mongoose**, with two collections:
 | `practiceMission` | `{ topic, durationMinutes }` | assigned automatically on accept |
 | `createdAt` | Date | auto |
 
-A unique compound index on `(senderId, receiverId)` prevents duplicate connection requests between the same pair of users.
+A **unique compound index** on `(senderId, receiverId)` prevents duplicate connection requests between the same pair of users.
 
 > No manual seed script is included — create a few profiles from the UI (`/profile`) to populate matches and test the matching algorithm.
+
+**Setting up your own MongoDB Atlas cluster:**
+1. Create a free cluster at [mongodb.com/cloud/atlas](https://www.mongodb.com/cloud/atlas)
+2. Under **Network Access**, allow access from anywhere (`0.0.0.0/0`) since the backend is hosted on a platform with dynamic IPs
+3. Under **Database Access**, create a database user with read/write permissions
+4. Copy the connection string and append a database name, e.g. `.../fluentfeed?retryWrites=true&w=majority`
 
 ---
 
 ## 📡 API Documentation
 
-**Base URL:** `http://localhost:5000/api`
+**Base URL (local):** `http://localhost:5000/api`
+**Base URL (production):** `https://fluentfeed-server.onrender.com/api`
 
 All responses follow a consistent shape:
 ```json
@@ -196,7 +223,9 @@ For a given user, every other profile is scored against them and the **top 5 hig
 | Same Country | +10 |
 | Same Native Language | +5 |
 
-Maximum possible score is **100**, shown directly as a `matchPercentage` (e.g. `92% Match`). Scores are computed on the fly per request rather than pre-cached, since the dataset size for this prototype is small — this keeps results always fresh without needing cache invalidation logic.
+**Maximum possible score is 100**, shown directly as a `matchPercentage` (e.g. `92% Match`).
+
+Scores are computed **on the fly per request** rather than pre-cached, since the dataset size for this prototype is small — this keeps results always fresh without needing cache invalidation logic. If the dataset grows significantly, this could be optimized with pre-computed match scores refreshed on profile update.
 
 ---
 
@@ -219,6 +248,7 @@ Maximum possible score is **100**, shown directly as a `matchPercentage` (e.g. `
 - Persist and rotate practice missions per connection over time instead of assigning just once on accept
 - Add a notifications badge in the navbar for pending incoming requests
 - Add rate limiting and input sanitization middleware for production hardening
+- Move the backend to a paid/always-on tier to eliminate cold-start latency
 
 ---
 
@@ -226,14 +256,21 @@ Maximum possible score is **100**, shown directly as a `matchPercentage` (e.g. `
 
 | Service | Platform | Notes |
 |---|---|---|
-| **Backend** | Render / Railway | Build: `npm run build` · Start: `npm start` |
-| **Frontend** | Vercel / Netlify | Build: `npm run build` · Output: `dist` |
+| **Backend** | [Render](https://render.com) | Deployed via Blueprint (`render.yaml`) · Build: `npm install && npm run build` · Start: `npm start` |
+| **Frontend** | [Vercel](https://vercel.com) | Root directory: `client` · Build: `npm run build` · Output: `dist` |
 | **Database** | MongoDB Atlas | Cloud-hosted, free tier |
 
-- **Live app:** `<add your deployed link here>`
+- **Live app:** https://fluentfeed-practice-partners.vercel.app
+- **Live API:** https://fluentfeed-server.onrender.com/api
 - **Repository:** [github.com/rajankumarsingh01/fluentfeed-practice-partners](https://github.com/rajankumarsingh01/fluentfeed-practice-partners)
 
-> ⚠️ Remember to set `CLIENT_URL` (server) and `VITE_API_URL` (client) as environment variables on your hosting platform to point to the deployed URLs, not `localhost`.
+**Environment variables set on hosting platforms:**
+
+| Platform | Variable | Value |
+|---|---|---|
+| Render (backend) | `MONGO_URI` | MongoDB Atlas connection string |
+| Render (backend) | `CLIENT_URL` | `https://fluentfeed-practice-partners.vercel.app` |
+| Vercel (frontend) | `VITE_API_URL` | `https://fluentfeed-server.onrender.com/api` |
 
 ---
 
