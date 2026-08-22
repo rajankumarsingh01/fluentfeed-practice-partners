@@ -2,6 +2,7 @@ import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
 import { connectDB } from "./config/db";
+import profileRoutes from "./routes/profile.routes";
 
 dotenv.config();
 
@@ -14,6 +15,8 @@ app.use(express.json());
 app.get("/api/health", (req, res) => {
   res.json({ status: "ok", message: "FluentFeed server is running" });
 });
+
+app.use("/api/profile", profileRoutes);
 
 const startServer = async () => {
   await connectDB();
