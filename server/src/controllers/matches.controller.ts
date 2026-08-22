@@ -36,7 +36,7 @@ export const getMatches = async (req: Request, res: Response) => {
     }
 
     // Get all other users (exclude self)
-    const otherUsers = await User.find({ _id: { $ne: userId } });
+const otherUsers = await User.find({ _id: { $ne: userId as string } })
 
     // Score each user
     const scoredUsers = otherUsers.map((otherUser) => {
