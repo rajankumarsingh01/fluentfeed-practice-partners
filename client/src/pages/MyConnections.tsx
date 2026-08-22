@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { getConnections, updateConnectionStatus } from "../api";
-import { useUser } from "../context/UserContext.tsx";
+import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
 import type { Connection } from "../types";
 import ConnectionCard from "../components/ConnectionCard";
@@ -16,16 +16,20 @@ const MyConnections = () => {
   const [error, setError] = useState("");
   const [actionLoadingId, setActionLoadingId] = useState<string | null>(null);
 
-  const loadConnections = () => {
-    if (!userId) return;
-    setLoading(true);
-    getConnections(userId)
-      .then((res) => setConnections(res.data || []))
-      .catch(() => setError("Could not load your connections."))
-      .finally(() => setLoading(false));
-  };
+ const loadConnections = () => {
+  if (!userId) return;
+  setLoading(true);
+  getConnections(userId)
+    .then((res) => setConnections(res.data || []))
+    .catch(() => setError("Could not load your connections."))
+    .finally(() => setLoading(false));
+};
 
-  useEffect(loadConnections, [userId]);
+useEffect(() => {
+  
+  loadConnections();
+ 
+}, [userId]);
 
   const handleAction = async (id: string, status: "accepted" | "rejected", name: string) => {
     setActionLoadingId(id);

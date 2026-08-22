@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { getMatches, getUsers, sendConnectionRequest, type UserFilters } from "../api";
-import { useUser } from "../context/UserContext.tsx";
+import { useUser } from "../context/UserContext";
+import { getErrorMessage } from "../api/client";
 import { useToast } from "../context/ToastContext";
 import type { Match, User } from "../types";
 import MatchCard from "../components/MatchCard";
@@ -32,6 +33,7 @@ const FindPartners = () => {
 
   useEffect(() => {
     if (!userId) return;
+
     setLoading(true);
     getMatches(userId)
       .then((res) => setTopMatches(res.data || []))
@@ -66,8 +68,8 @@ const FindPartners = () => {
       await sendConnectionRequest(userId, targetUserId);
       setRequestedIds((prev) => new Set(prev).add(targetUserId));
       showToast(`Request sent to ${targetName} 🎉`, "success");
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || "Could not send connection request.";
+    } catch (err) {
+      const msg = getErrorMessage(err, "Could not send connection request.");
       showToast(msg, "error");
       setError(msg);
     } finally {

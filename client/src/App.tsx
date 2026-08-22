@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import { UserProvider, useUser } from "./context/UserContext.tsx";
+import { UserProvider, useUser } from "./context/UserContext";
 import { ToastProvider } from "./context/ToastContext";
 import Navbar from "./components/Navbar";
 import WelcomePage from "./pages/WelcomePage";

@@ -7,4 +7,13 @@ const apiClient = axios.create({
   },
 });
 
+
+export const getErrorMessage = (err: unknown, fallback: string): string => {
+  if (axios.isAxiosError(err)) {
+    const message = err.response?.data?.message;
+    if (typeof message === "string") return message;
+  }
+  return fallback;
+};
+
 export default apiClient;

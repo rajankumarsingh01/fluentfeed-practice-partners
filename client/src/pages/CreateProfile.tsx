@@ -1,7 +1,8 @@
 import { useEffect, useState, type FormEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import { createProfile, getProfile, updateProfile } from "../api";
-import { useUser } from "../context/UserContext.tsx";
+import { getErrorMessage } from "../api/client";
+import { useUser } from "../context/UserContext";
 import { useToast } from "../context/ToastContext";
 import type { ProfileFormData } from "../types";
 import ErrorBanner from "../components/ErrorBanner";
@@ -38,7 +39,6 @@ const CreateProfile = () => {
 
   useEffect(() => {
     if (!userId) {
-      setInitialLoading(false);
       return;
     }
     getProfile(userId)
@@ -87,8 +87,8 @@ const CreateProfile = () => {
         showToast(`Welcome, ${form.name.split(" ")[0]}! Profile created 🎉`, "success");
       }
       setTimeout(() => navigate("/find-partners"), 600);
-    } catch (err: any) {
-      const msg = err?.response?.data?.message || "Something went wrong. Please try again.";
+    } catch (err) {
+      const msg = getErrorMessage(err, "Something went wrong. Please try again.");
       setError(msg);
       showToast(msg, "error");
     } finally {
