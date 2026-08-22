@@ -1,10 +1,24 @@
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import Navbar from "./components/Navbar";
+import CreateProfile from "./pages/CreateProfile";
+import FindPartners from "./pages/FindPartners";
+import MyConnections from "./pages/MyConnections";
+
 function App() {
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
-      <h1 className="text-3xl font-bold text-indigo-600">
-        FluentFeed Practice Partners 🚀
-      </h1>
-    </div>
+    <BrowserRouter>
+      <div className="min-h-screen bg-gray-50">
+        <Navbar />
+        <main>
+          <Routes>
+            <Route path="/" element={<Navigate to="/profile" replace />} />
+            <Route path="/profile" element={<CreateProfile />} />
+            <Route path="/find-partners" element={<FindPartners />} />
+            <Route path="/connections" element={<MyConnections />} />
+          </Routes>
+        </main>
+      </div>
+    </BrowserRouter>
   );
 }
 
